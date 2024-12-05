@@ -1,0 +1,35 @@
+ansible file:
+/root/Project1DevOps/ansible4.yml
+---
+- hosts: localhost
+become: yes
+tasks:
+- name: Build an image and push it to a private repo
+community.docker.docker_image:
+build:
+path: "/root/Project1DevOps/task4dockerfile"
+name: docker.io/edureka343/project1devopshub:task4
+#tag: test
+push: true
+source: build
+register: out
+- debug:
+var: out
+- name: start a container
+community.docker.docker_container:
+name: abc-application
+image: edureka343/project1devopshub:task4
+state: started
+ports:
+- 1234:8080
+#restart: true
+register: out
+- debug:
+var: out
+#- name: Deploying to kubernetes
+- name: Create a Deployment by reading the definition from a local 
+command: "kubectl --kubeconfig=/etc/kubernetes/admin.conf apply 
+   /root/Project1DevOps/deployment.yml"
+register: out
+- debug:
+var: out
